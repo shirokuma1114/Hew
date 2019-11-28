@@ -19,7 +19,7 @@
 #define	Player_HEIGHT		(15.0f)						// ’n–Ê‚Ì‚‚³(Y•ûŒü)
 
 #define Player_ANGLE		(8)
-#define MAXSPEED			(200.0f)						// ˆÚ“®—Ê
+#define MAXSPEED			(150.0f)						// ˆÚ“®—Ê
 
 #define SAFE_RELEASE(p) {if(p){(p)->Release();(p)=NULL;}}//ˆÀ‘S‚É‰ð•ú‚·‚é
 

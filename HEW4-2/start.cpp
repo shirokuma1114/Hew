@@ -91,7 +91,7 @@ HRESULT Start_Initialize(void)
 
 	g_posStart = D3DXVECTOR3(100.0f, 0.0f, 100.0f);
 	g_rotStart = D3DXVECTOR3(D3DX_PI / 6, 0.0f, 0.0f);
-	g_sclStart = D3DXVECTOR3(5.0f, 5.0f, 5.0f);
+	g_sclStart = D3DXVECTOR3(15.0f, 15.0f, 15.0f);
 
 
 	return S_OK;
