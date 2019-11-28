@@ -1,11 +1,19 @@
-#include <iostream>
-#include <time.h>
-#include <stdlib.h>
+
+/*「Ground.cpp」=============================================
+　・地面を作るファイルだよ
+
+ 　 制作概要：HEW2年次作品「ペダル」
+　　製作者：バイクのやつ　	(-"-)taiki okahara
+=============================================================*/
+
 #include "myDirect3D.h"
 #include "input.h"
 #include "texture.h"
 #include "debugproc.h"
+#include <iostream>
+#include <time.h>
 #include "ground.h"
+#include <stdlib.h>
 #include "player.h"
 
 //*****************************************************************************
@@ -17,154 +25,82 @@
 #define PLATE_Z_NUM		(10)						//プレートの数
 #define	PLATE_NUM		(PLATE_X_NUM)*(PLATE_Z_NUM)	//1ブロック内のプレートの総数
 
-
-#define GROUND_NUM	(16)									//ブロックの総数
-#define GROUND_X_SIZE		((PLATE_X_NUM) * (PLATE_SIZE))//ブロックのXサイズ
-#define GROUND_Z_SIZE		((PLATE_Z_NUM) * (PLATE_SIZE))//ブロックのZサイズ
+#define GROUND_NUM	(15)									//ブロックの総数
+#define GROUND_X_SIZE		((PLATE_X_NUM) * (PLATE_SIZE))	//ブロックのXサイズ
+#define GROUND_Z_SIZE		((PLATE_Z_NUM) * (PLATE_SIZE))	//ブロックのZサイズ
 //*****************************************************************************
 // グローバル変数
 //*****************************************************************************
 static LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffGround[GROUND_NUM];	// 頂点バッファへのポインタ
 static LPDIRECT3DINDEXBUFFER9	g_pIdxBuffGround[GROUND_NUM];	// 頂点バッファへのポインタ
 
-
 GROUND	ground[GROUND_NUM];	//グラウンドをGROUN_NUM分生成
-	
+
+
+
 int		PrimCount = (PLATE_X_NUM * PLATE_Z_NUM) * 2 + (PLATE_Z_NUM - 1) * 4;;	//ポリゴン数
-
 int		NumIndex = (PLATE_X_NUM + 1) * 2 * PLATE_Z_NUM + (PLATE_Z_NUM - 1) * 2;	//頂点インデックス数
-
 int		NumVertex = (PLATE_X_NUM + 1) * (PLATE_Z_NUM + 1);						//頂点数
 
-GROUND::GROUND()
-{
-	//エラー検知数値
-	this_ground_num = 999;
-}
+//=============================================================================
+// GROUNDクラス
+//=============================================================================																			
+
+//	[SetGround_Pos関数]	ブロックの初期設定をする関数
+//【第一引数：ブロック番号】【第二引数：ブロック種類】【第三引数：ブロック座標】
+void GROUND::SetGround_Pos(int ground_num, int g_type, D3DXVECTOR3 ground_pos) {
 
 
-GROUND::~GROUND()
-{
-}
+	LookVtx = new VERTEX_3D[NumVertex];	//　VRAMから持ってくるVtx情報の容量確保
+	LookIdxNum = new int[NumIndex];		//	VRAMから持ってくるIdx情報の容量確保
 
-//Ground関数の初期化（第二引数はブロックの中心座標）
-void GROUND::Initialize(LPDIRECT3DDEVICE9 InDevice, D3DXVECTOR3 ground_pos) 
-{
-	LookVtx = new VERTEX_3D[NumVertex];//　VRAMから持ってくるVtx情報の容量確保
-	LookIdxNum = new int[NumIndex];
 
 	// 位置・回転・スケールの初期設定
+	g_posGround = ground_pos;				//中心となる座標
+	g_rotGround = D3DXVECTOR3(0, 0, 0.0f);	//回転角。基本的にはいじらない
+	g_sclGround = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//大きさ
 
-	g_posGround = ground_pos;//中心点
-	g_rotGround = D3DXVECTOR3(0,0, 0.0f);//回転角。基本的にはいじらない
-	g_sclGround = D3DXVECTOR3(1.0f, 1.0f, 1.0f);
+	ground_type = g_type;					//ブロックの種類を代入
 
-	
-	/*
-		1ブロックを上から見たとき（X-Z座標）の4頂点をPointとする
+	MakeVertexGround(ground_num);
 
-		Point1　　Point2
-		　__________
-		  |         |
-		  |         |
-		  |_________|
-		Point0　　Point3
-	*/
 }
-
-void GROUND::Finalize() {
-	
-}
-
-
-int  GROUND::GetGroundNum() {
-	return this_ground_num;
-}
-
-void GROUND::SetGroundNum(int num) {
-	this_ground_num = num;
-}
-
-
-
-
 //=============================================================================
 // 初期化処理
 //=============================================================================
 void Ground_Initialize(void)
 {
+	//バッファポインタNULL初期化
 	for (int i = 0; i < GROUND_NUM; i++)
 	{
 		g_pVtxBuffGround[i] = NULL;
 		g_pIdxBuffGround[i] = NULL;
 	}
 
-	LPDIRECT3DDEVICE9 pDevice = GetD3DDevice();
+	//ground生成
+	ground[0].SetGround_Pos(0, 0, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	ground[0].SetGroundNum(0);//ブロックの種類番号
-	ground[1].SetGroundNum(0);//ブロックの種類番号
-	ground[2].SetGroundNum(0);//ブロックの種類番号
+	ground[1].SetGround_Pos(1, 0, D3DXVECTOR3(0.0f, 0.0f, 300.0f));
+	ground[2].SetGround_Pos(2, 0, D3DXVECTOR3(0.0f, 0.0f, 600.0f));
 
-	ground[3].SetGroundNum(1);//ブロックの種類番号
+	ground[3].SetGround_Pos(3, 1, D3DXVECTOR3(0.0f, 0.0f, 900.0f));
 
-	ground[4].SetGroundNum(0);//ブロックの種類番号
-	ground[5].SetGroundNum(0);//ブロックの種類番号
+	ground[4].SetGround_Pos(4, 6, D3DXVECTOR3(300.0f, 0.0f, 900.0f));
+	ground[5].SetGround_Pos(5, 7, D3DXVECTOR3(600.0f, 50.0f, 900.0f));
 
-	ground[6].SetGroundNum(2);//ブロックの種類番号
+	ground[6].SetGround_Pos(6, 2, D3DXVECTOR3(600.0f, 50.0f, 900.0f));
 
-	ground[7].SetGroundNum(0);//ブロックの種類番号
-	ground[8].SetGroundNum(0);//ブロックの種類番号	
-	ground[9].SetGroundNum(0);//ブロックの種類番号
-	ground[10].SetGroundNum(0);//ブロックの種類番号
-
-	ground[11].SetGroundNum(3);//ブロックの種類番号	
-
-	ground[12].SetGroundNum(0);//ブロックの種類番号	
-	ground[13].SetGroundNum(0);//ブロックの種類番号
-
-	ground[14].SetGroundNum(4);//ブロックの種類番号
+	ground[7].SetGround_Pos(7, 0, D3DXVECTOR3(900.0f, 50.0f, 600.0f));
+	ground[8].SetGround_Pos(8, 0, D3DXVECTOR3(900.0f, 50.0f, 300.0f));
+	ground[9].SetGround_Pos(9, 8, D3DXVECTOR3(900.0f, 50.0f, 0.0f));
 
 
-	ground[0].Initialize(pDevice, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	MakeVertexGround(pDevice, 0);
-	ground[1].Initialize(pDevice, D3DXVECTOR3(0.0f, 0.0f, 300.0f));
-	MakeVertexGround(pDevice, 1);
-	ground[2].Initialize(pDevice, D3DXVECTOR3(0.0f, 0.0f, 600.0f));
-	MakeVertexGround(pDevice, 2);
+	ground[10].SetGround_Pos(10, 3, D3DXVECTOR3(600.0f, 0.0f, 0.0f));
 
+	ground[11].SetGround_Pos(11, 5, D3DXVECTOR3(600.0f, 0.0f, -300.0f));
+	ground[12].SetGround_Pos(12, 5, D3DXVECTOR3(300.0f, 0.0f, -300.0f));
 
-	ground[3].Initialize(pDevice, D3DXVECTOR3(0.0f, 0.0f, 900.0f));
-	MakeVertexGround(pDevice, 3);
-
-	ground[4].Initialize(pDevice, D3DXVECTOR3(300.0f, 0.0f, 900.0f));
-	MakeVertexGround(pDevice, 4);
-	ground[5].Initialize(pDevice, D3DXVECTOR3(600.0f, 0.0f, 900.0f));
-	MakeVertexGround(pDevice, 5);
-
-	ground[6].Initialize(pDevice, D3DXVECTOR3(600.0f, 0.0f, 900.0f));
-	MakeVertexGround(pDevice, 6);
-
-	ground[7].Initialize(pDevice, D3DXVECTOR3(900.0f, 0.0f, 600.0f));
-	MakeVertexGround(pDevice, 7);
-	ground[8].Initialize(pDevice, D3DXVECTOR3(900.0f, 0.0f, 300.0f));
-	MakeVertexGround(pDevice, 8);
-	ground[9].Initialize(pDevice, D3DXVECTOR3(900.0f, 0.0f, 0.0f));
-	MakeVertexGround(pDevice, 9);
-	ground[10].Initialize(pDevice, D3DXVECTOR3(900.0f, 0.0f, 0.0f));
-	MakeVertexGround(pDevice, 10);
-
-	ground[11].Initialize(pDevice, D3DXVECTOR3(600.0f, 0.0f, 0.0f));
-	MakeVertexGround(pDevice, 11);
-
-	ground[12].Initialize(pDevice, D3DXVECTOR3(600.0f, 0.0f, -300.0f));
-	MakeVertexGround(pDevice, 12);
-	ground[13].Initialize(pDevice, D3DXVECTOR3(300.0f, 0.0f, -300.0f));
-	MakeVertexGround(pDevice, 13);
-
-	ground[14].Initialize(pDevice, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
-	MakeVertexGround(pDevice, 14);
-
-
+	ground[13].SetGround_Pos(13, 4, D3DXVECTOR3(0.0f, 0.0f, -0.0f));
 }
 
 //=============================================================================
@@ -172,6 +108,7 @@ void Ground_Initialize(void)
 //=============================================================================
 void Ground_Finalize(void)
 {
+
 	for (int i = 0; i < GROUND_NUM; i++)
 	{
 		delete[] ground[i].LookVtx;
@@ -190,8 +127,7 @@ void Ground_Finalize(void)
 	}
 }
 
-void Ground_Update(void) 
-{
+void Ground_Update(void) {
 }
 
 //=============================================================================
@@ -200,7 +136,6 @@ void Ground_Update(void)
 void Ground_Draw(void)
 {
 	LPDIRECT3DDEVICE9 pDevice = GetD3DDevice();
-
 	D3DXMATRIX mtxScl, mtxRot, mtxTranslate;
 
 	for (int i = 0; i < GROUND_NUM; i++)
@@ -231,7 +166,7 @@ void Ground_Draw(void)
 
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD01));
+		pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD03));//テクスチャを変える場合はここの第二引数を変更する
 
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, NumVertex, 0, PrimCount);
 	}
@@ -241,8 +176,10 @@ void Ground_Draw(void)
 //=============================================================================
 // 頂点の作成
 //=============================================================================
-HRESULT MakeVertexGround(LPDIRECT3DDEVICE9 pDevice, int ground_num)
+HRESULT MakeVertexGround(int ground_num)
 {
+	LPDIRECT3DDEVICE9 pDevice = GetD3DDevice();
+
 	if (FAILED(pDevice->CreateVertexBuffer(sizeof(VERTEX_3D) * NumVertex, //VRAMにメモリを作る
 		D3DUSAGE_WRITEONLY,
 		FVF_VERTEX_3D,
@@ -254,36 +191,53 @@ HRESULT MakeVertexGround(LPDIRECT3DDEVICE9 pDevice, int ground_num)
 	}
 
 	{//頂点バッファの中身を埋める
-		
+
 		VERTEX_3D *pVtx;
-		
+
+
 		//Lock,unLockをあまりしないのがパフォーマンスを上げる方法
 		g_pVtxBuffGround[ground_num]->Lock(0, 0, (void**)&pVtx, 0); //VRAMにあったメモリをシステム上に持ってきてくれる
-		
-		switch (ground[ground_num].GetGroundNum())
+
+
+		//ブロックの種類でswitch
+		switch (ground[ground_num].ground_type)
 		{
 		case 0:
-			Block0_Stage(pVtx, ground_num);//ブロック1を作成
+			Block0_Stage(pVtx, ground_num);//ブロック0を作成
 			break;
 		case 1:
-			Block1_Stage(pVtx, ground_num);//ブロック2を作成
+			Block1_Stage(pVtx, ground_num);//ブロック1を作成
 			break;
 		case 2:
 			Block2_Stage(pVtx, ground_num);//ブロック2を作成
 			break;
 		case 3:
-			Block3_Stage(pVtx, ground_num);//ブロック2を作成
+			Block3_Stage(pVtx, ground_num);//ブロック3を作成
 			break;
 		case 4:
-			Block4_Stage(pVtx, ground_num);//ブロック2を作成
+			Block4_Stage(pVtx, ground_num);//ブロック4を作成
+			break;
+		case 5:
+			Block5_Stage(pVtx, ground_num);//ブロック5を作成
+			break;
+		case 6:
+			Block6_Stage(pVtx, ground_num);//ブロック6を作成
+			break;
+		case 7:
+			Block7_Stage(pVtx, ground_num);//ブロック7を作成
+			break;
+		case 8:
+			Block8_Stage(pVtx, ground_num);//ブロック8を作成
 			break;
 		default:
 			break;
 		}
-		
-	
+
 		g_pVtxBuffGround[ground_num]->Unlock(); //VRAMにメモリを返す(重い処理)
 	}
+
+
+	//ブロック座標の最大、最小値をPointに代入
 	float min_Pos_x = ground[ground_num].g_posGround.x;
 	float min_Pos_z = ground[ground_num].g_posGround.z;
 	float max_Pos_x = ground[ground_num].g_posGround.x;
@@ -305,13 +259,23 @@ HRESULT MakeVertexGround(LPDIRECT3DDEVICE9 pDevice, int ground_num)
 		}
 
 	}
+	/*
+		1ブロックを上から見たとき（X-Z座標）の4頂点をPointとする
+
+		Point1　　Point2
+		　__________
+		  |         |
+		  |         |
+		  |_________|
+		Point0　　Point3
+	*/
 	ground[ground_num].Point0 = D3DXVECTOR3(min_Pos_x, 0.0f, min_Pos_z);
 	ground[ground_num].Point1 = D3DXVECTOR3(min_Pos_x, 0.0f, max_Pos_z);
 	ground[ground_num].Point2 = D3DXVECTOR3(max_Pos_x, 0.0f, max_Pos_z);
 	ground[ground_num].Point3 = D3DXVECTOR3(max_Pos_x, 0.0f, min_Pos_z);
 
 
-	
+
 	if (FAILED(pDevice->CreateIndexBuffer(sizeof(WORD) * NumIndex, //VRAMにメモリを作る
 		D3DUSAGE_WRITEONLY,
 		D3DFMT_INDEX16,
@@ -331,253 +295,15 @@ HRESULT MakeVertexGround(LPDIRECT3DDEVICE9 pDevice, int ground_num)
 
 		g_pIdxBuffGround[ground_num]->Unlock();
 	}
-	
+
 	return S_OK;
 }
 
-int Ground_Check() {
-	D3DXVECTOR3 player_pos = GetPlayer_Pos();
-	for (int i = 0; i < GROUND_NUM; i++)
-	{
-		if (ground[i].Point0.x <= player_pos.x &&
-			ground[i].Point2.x >= player_pos.x &&
-			ground[i].Point0.z <= player_pos.z &&
-			ground[i].Point2.z >= player_pos.z )
-		{	
-			return i;
-		}
-	}
-	//DebugProc_Print((char *)"接しているブロックはないよ\n");
-	return 0;//エラー検知したほうがいいかも
-}
-
-float SetGroundHit(int g_num) {
-
-	D3DXVECTOR3 player_botom_position = GetPlayer_Pos();//現在のプレイヤーの位置;
-	player_botom_position.y -= 15.0f;
-	D3DXVECTOR3 next_player_botom_position = D3DXVECTOR3(player_botom_position.x, 0.0f, player_botom_position.z);
-
-	D3DXVECTOR3 vector1, vector2, vector3;//三角形の三辺をベクトル化
-
-	D3DXVECTOR3 hosen1, hosen2, hosen3;
-	for (int i = 0; i < NumIndex; i++)
-	{
-		if ((ground[g_num].LookIdxNum[i + 2]) > NumIndex || (ground[g_num].LookIdxNum[i + 2]) < 0)
-		{
-			//縮退ポリゴンのインデックスは飛ばす
-			i += 3;
-			continue;
-		}				
-
-
-		vector1 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos);
-		vector1.y = 0;
-
-		vector2 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos);
-		vector2.y = 0;
-
-		vector3 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos);
-		vector3.y = 0;
-
-		
-		D3DXVec3Cross(&hosen1, &(next_player_botom_position -
-			(D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.x, 0.0f, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.z))), &vector1);
-
-		D3DXVec3Cross(&hosen2, &(next_player_botom_position -
-			(D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos.x, 0.0f, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos.z))), &vector2);
-
-
-
-		//プレイヤーのいるポリゴン面を取得
-		if (hosen1.y >= 0 && hosen2.y >= 0 || hosen1.y <= 0 && hosen2.y <= 0)
-		{
-			if (hosen1.y == 0)//頂点が「i」のときのは計算をしなくていいのでそのまま値を返す
-			{
-				return player_botom_position.y + 15.0f;
-			}
-			else if (hosen2.y == 0)//頂点が「i」のときのは計算をしなくていいのでそのまま値を返す
-			{
-				return player_botom_position.y + 15.0f;
-			}
-			else
-			{
-
-				D3DXVec3Cross(&hosen3, &(next_player_botom_position -
-					(D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos.x, 0.0f, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos.z))), &vector3);
-
-
-				if (hosen2.y >= 0 && hosen3.y >= 0 || hosen2.y <= 0 && hosen3.y <= 0)
-				{
-
-					if (hosen3.y == 0)//頂点が「i」のときのは計算をしなくていいのでそのまま値を返す
-					{
-						return player_botom_position.y + 15.0f;
-					}
-					else {
-						D3DXVECTOR3 naiseki1, naiseki2;
-						naiseki1 = D3DXVECTOR3(
-							player_botom_position.x - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.x,
-							player_botom_position.y - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.y,
-							player_botom_position.z - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.z);						//PA
-
-						naiseki2 = D3DXVECTOR3(
-							(player_botom_position.x + GetNormalPlayer_Pos().x) - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.x,
-							(player_botom_position.y + GetNormalPlayer_Pos().y) - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.y,
-							(player_botom_position.z + GetNormalPlayer_Pos().z) - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.z);	//PB
-
-						D3DXVECTOR3 n;//法線ベクトル
-						D3DXVECTOR3 AB = GetNormalPlayer_Pos();
-
-						//ベクトル再設定
-						vector1 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos);
-						vector3 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos);
-						//vector3.x *= -1.0f;
-						//vector3.y *= -1.0f;
-						//vector3.z *= -1.0f;
-
-
-
-						//vector3 *=  -1.0f;//マイナスベクトルにする
-						D3DXVec3Cross(&n, &vector1, &vector3);//外積で面法線を計算
-
-						//地面より下にいたら地面上に再設置
-						if ((D3DXVec3Dot(&naiseki2, &n)) > 0.00 && (D3DXVec3Dot(&naiseki1, &n)) <= 0.00 ||
-							(D3DXVec3Dot(&naiseki2, &n)) <= 0.00 && (D3DXVec3Dot(&naiseki1, &n)) > 0.00) {
-
-
-							player_botom_position.y += AB.y * (fabsf(D3DXVec3Dot(&n, &naiseki1) / (fabsf(D3DXVec3Dot(&n, &naiseki1) + fabsf(D3DXVec3Dot(&n, &naiseki2))))));
-
-
-							//DebugProc_Print((char *)"インデックス：【%d】座標1：【%f,%f,%f】\n", ground[g_num].LookIdxNum[i], ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.x, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.y, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.z);
-							//DebugProc_Print((char *)"インデックス：【%d】座標2：【%f,%f,%f】\n", ground[g_num].LookIdxNum[i + 1], ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos.x, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos.y, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos.z);
-							//DebugProc_Print((char *)"インデックス：【%d】座標3：【%f,%f,%f】\n", ground[g_num].LookIdxNum[i + 2], ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos.x, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos.y, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos.z);
-
-							//DebugProc_Print((char *)"\n【%f】\n", player_botom_position.y);
-							return player_botom_position.y + 15.0f;
-						}
-						return player_botom_position.y + 15.0f;
-					}
-				}
-			}
-		}	
-	}
-	return player_botom_position.y +15.0f;
-}
-
-//頂点を作る関数を作成する
-
-
-void Block0_Stage(VERTEX_3D *pvtx, int g_num) {
-	srand((unsigned int)time(NULL));
-	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
-	int katamuki_hani = 5;
-
-	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
-	{
-		for (int x = 0; x < PLATE_X_NUM + 1; x++)
-		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, 0.0f, (PLATE_SIZE * z) + base_position.z);
-			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
-			{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
-			}*/
-
-			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2(1.0f * x, 1.0f * z);
-
-			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
-		}
-	}
-}
-
-void Block1_Stage(VERTEX_3D *pvtx, int g_num) {
-
-	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
-	int katamuki_hani = 5;
-
-	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
-	{
-		for (int x = 0; x < PLATE_X_NUM + 1; x++)
-		{
-
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 20) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.x, 0.0f, cos(-(z* D3DX_PI / 20) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.z);
-
-
-
-			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2(1.0f * x, 1.0f * z);
-
-			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
-		}
-	}
-}
-
-void Block2_Stage(VERTEX_3D *pvtx, int g_num) {
-
-	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
-	int katamuki_hani = 5;
-
-	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
-	{
-		for (int x = 0; x < PLATE_X_NUM + 1; x++)
-		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 20) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f, cos((z* D3DX_PI / 20) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
-			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2(1.0f * x, 1.0f * z);
-
-			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
-		}
-	}
-}
-
-void Block3_Stage(VERTEX_3D *pvtx, int g_num) {
-	srand((unsigned int)time(NULL));
-	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
-	int katamuki_hani = 5;
-
-	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
-	{
-		for (int x = 0; x < PLATE_X_NUM + 1; x++)
-		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 20) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f, cos((z* D3DX_PI / 20) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
-
-
-			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2(1.0f * x, 1.0f * z);
-
-			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
-		}
-	}
-}
-
-void Block4_Stage(VERTEX_3D *pvtx, int g_num) {
-	srand((unsigned int)time(NULL));
-	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
-	int katamuki_hani = 5;
-
-	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
-	{
-		for (int x = 0; x < PLATE_X_NUM + 1; x++)
-		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 20) + D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.x, 0.0f, cos(-(z* D3DX_PI / 20) - D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.z);
-
-
-			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2(1.0f * x, 1.0f * z);
-
-			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
-		}
-	}
-}
-
-
+//=============================================================================
+// インデックスの作成
+//=============================================================================
 void MakeIdx(WORD *Idx, int g_num) {
-	
+
 	int j = 0;
 	int i = 0;
 	for (int k = 0; k < PLATE_Z_NUM; k++)
@@ -601,5 +327,337 @@ void MakeIdx(WORD *Idx, int g_num) {
 
 		i += (2 * (PLATE_X_NUM + 2));
 		j = 0;
+	}
+}
+
+//=============================================================================
+// プレイヤー接触ブロック判定
+//=============================================================================
+int Ground_Check() {
+
+	D3DXVECTOR3 player_pos = GetPlayer_Pos();
+	for (int i = 0; i < GROUND_NUM; i++)
+	{
+		//ブロックの最大、最小値の中にプレイヤーがいたら、当たり判定を計算する
+		if (ground[i].Point0.x <= player_pos.x &&
+			ground[i].Point2.x >= player_pos.x &&
+			ground[i].Point0.z <= player_pos.z &&
+			ground[i].Point2.z >= player_pos.z)
+		{
+			return i;//プレイヤーのいるブロックの番号を返す
+		}
+	}
+	DebugProc_Print((char *)"接しているブロックはないよ\n");
+	return 0;//エラー検知したほうがいいかも
+}
+
+//=============================================================================
+// プレイヤーY軸補間（地面の上に載るようにする処理）
+//=============================================================================
+float SetGroundHit(int g_num) {
+
+
+	D3DXVECTOR3 player_botom_position = GetPlayer_Pos();//現在のプレイヤーの位置;
+	player_botom_position.y -= 15.0f;//プレイヤー底面
+
+	D3DXVECTOR3 next_player_botom_position = D3DXVECTOR3(player_botom_position.x, 0.0f, player_botom_position.z);//二次元変換
+	D3DXVECTOR3 vector1, vector2, vector3;//三角形の三辺をベクトル化
+
+
+	D3DXVECTOR3 hosen1, hosen2, hosen3;
+	for (int i = 0; i < NumIndex; i++)
+	{
+		if ((ground[g_num].LookIdxNum[i + 2]) > NumIndex || (ground[g_num].LookIdxNum[i + 2]) < 0)
+		{
+			//縮退ポリゴンのインデックスは飛ばす
+			i += 3;
+			continue;
+		}
+
+
+		vector1 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos);
+		vector1.y = 0;
+
+		vector2 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos);
+		vector2.y = 0;
+
+		vector3 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos);
+		vector3.y = 0;
+
+
+		D3DXVec3Cross(&hosen1, &(next_player_botom_position -
+			(D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.x, 0.0f, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.z))), &vector1);
+
+		D3DXVec3Cross(&hosen2, &(next_player_botom_position -
+			(D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos.x, 0.0f, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos.z))), &vector2);
+
+
+
+		//プレイヤーのいるポリゴン面を取得
+
+		if (hosen1.y >= 0 && hosen2.y >= 0 || hosen1.y <= 0 && hosen2.y <= 0)
+		{
+			if (hosen1.y == 0 || hosen2 == 0)//頂点が「i」のときのは計算をしなくていいのでそのまま値を返す
+			{
+				return player_botom_position.y + 15.0f;
+			}
+			else
+			{
+
+				D3DXVec3Cross(
+					&hosen3,
+					&(next_player_botom_position - (D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos.x, 0.0f, ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos.z))),
+					&vector3);
+
+
+				if (hosen2.y >= 0 && hosen3.y >= 0 || hosen2.y <= 0 && hosen3.y <= 0)
+				{
+
+					if (hosen3.y == 0)//頂点が「i」のときのは計算をしなくていいのでそのまま値を返す
+					{
+						return player_botom_position.y + 15.0f;
+					}
+					else {
+
+						D3DXVECTOR3 naiseki1, naiseki2;
+						naiseki1 = D3DXVECTOR3(
+							player_botom_position.x - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.x,
+							player_botom_position.y - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.y,
+							player_botom_position.z - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.z);
+
+						naiseki2 = D3DXVECTOR3(
+							(player_botom_position.x + GetNormalPlayer_Pos().x) - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.x,
+							(player_botom_position.y + GetNormalPlayer_Pos().y) - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.y,
+							(player_botom_position.z + GetNormalPlayer_Pos().z) - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos.z);
+
+						D3DXVECTOR3 n;//法線ベクトル
+						D3DXVECTOR3 AB = GetNormalPlayer_Pos();
+
+						//ベクトル再設定
+						vector1 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 1]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos);
+						vector3 = D3DXVECTOR3(ground[g_num].LookVtx[ground[g_num].LookIdxNum[i + 2]].pos - ground[g_num].LookVtx[ground[g_num].LookIdxNum[i]].pos);
+
+
+
+						D3DXVec3Cross(&n, &vector1, &vector3);//外積で面法線を計算
+
+						//地面より下にいたら地面上に再設置
+						if ((D3DXVec3Dot(&naiseki2, &n)) > 0.00 && (D3DXVec3Dot(&naiseki1, &n)) <= 0.00 ||
+							(D3DXVec3Dot(&naiseki2, &n)) <= 0.00 && (D3DXVec3Dot(&naiseki1, &n)) > 0.00) {
+
+
+							player_botom_position.y += AB.y * (fabsf(D3DXVec3Dot(&n, &naiseki1) / (fabsf(D3DXVec3Dot(&n, &naiseki1) + fabsf(D3DXVec3Dot(&n, &naiseki2))))));
+
+							return player_botom_position.y + 15.0f;
+						}
+						return player_botom_position.y + 15.0f;
+					}
+				}
+			}
+		}
+
+	}
+	return player_botom_position.y + 15.0f;
+}
+
+
+//=============================================================================
+// ブロック生成関数
+//=============================================================================
+void Block0_Stage(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, 0.0f *  (rand() % 10) + base_position.y, (PLATE_SIZE * z) + base_position.z);
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+
+}
+
+void Block1_Stage(VERTEX_3D *pvtx, int g_num) {
+
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 20) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.x, 0.5f * x * z + base_position.y, cos(-(z* D3DX_PI / 20) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.z);
+
+
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+}
+
+void Block2_Stage(VERTEX_3D *pvtx, int g_num) {
+
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 20) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f + base_position.y, cos((z* D3DX_PI / 20) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+}
+
+void Block3_Stage(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+	int katamuki_hani = 5;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 20) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f + base_position.y, cos((z* D3DX_PI / 20) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
+
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * (PLATE_X_NUM - x)) / 500, (50.0f * (PLATE_Z_NUM - z)) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+}
+
+void Block4_Stage(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+	int katamuki_hani = 5;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 20) + D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.x, 0.0f + base_position.y, cos(-(z* D3DX_PI / 20) - D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.z);
+
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+}
+
+void Block5_Stage(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+	int katamuki_hani = 5;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, 0.0f + base_position.y, (PLATE_SIZE * z) + base_position.z);
+			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
+			{
+				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			}*/
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * (PLATE_Z_NUM - z)) / 500, (50.0f * x) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+}
+
+void Block6_Stage(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+	int katamuki_hani = 5;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, 5.0f * z + base_position.y, (PLATE_SIZE * z) + base_position.z);
+			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
+			{
+				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			}*/
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * z) / 500, (50.0f * x) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+}
+
+void Block7_Stage(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+	int katamuki_hani = 5;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, -0.5f * (PLATE_Z_NUM - z) * x + base_position.y, (PLATE_SIZE * z) + base_position.z);
+			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
+			{
+				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			}*/
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * (PLATE_Z_NUM - z)) / 500, (50.0f * x) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+}
+
+void Block8_Stage(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+	int katamuki_hani = 5;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, (PLATE_Z_NUM - z) * 5.0f * -1.0f + base_position.y, (PLATE_SIZE * z) + base_position.z);
+			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
+			{
+				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			}*/
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
 	}
 }
