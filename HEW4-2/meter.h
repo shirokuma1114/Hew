@@ -5,10 +5,7 @@
 //*****************************************************************************
 // プロトタイプ宣言
 //*****************************************************************************
-HRESULT InitMeter(void);
-void UninitMeter(void);
-void UpdateMeter(void);
-void DrawMeter(void);
-
-void ChangeMeter(int nValue);
-void ResetMeter(int nMeter = 0);
+void Meter_Initialize(void);
+void Meter_Finalize(void);
+void Meter_Update(void);
+void Meter_Draw(void);

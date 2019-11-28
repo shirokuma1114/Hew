@@ -8,6 +8,7 @@
 #include "texture.h"
 #include "sprite.h"
 #include "score.h"
+#include "meter.h"
 #include "ground.h"
 #include "scene.h"
 #include "fade.h"
@@ -66,6 +67,9 @@ void Game_Initialize(void)
 
 	// スコア
 	InitScore();
+
+	// メーター
+	Meter_Initialize();
 }
 
 void Game_Finalize(void)
@@ -94,6 +98,9 @@ void Game_Finalize(void)
 
 	// スコア
 	UninitScore();
+
+	// メーター
+	Meter_Finalize();
 }
 
 void Game_Update(void)
@@ -122,6 +129,9 @@ void Game_Update(void)
 
 	// スコア
 	UpdateScore();	
+
+	// メーター
+	Meter_Update();
 
 	if (Keyboard_IsTrigger(DIK_SPACE))
 	{
@@ -153,6 +163,9 @@ void Game_Draw(void)
 
 	// スコア
 	DrawScore();
+
+	// メーター
+	Meter_Draw();
 }
 
 

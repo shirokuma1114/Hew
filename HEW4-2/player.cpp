@@ -12,14 +12,13 @@
 // マクロ定義
 //*****************************************************************************
 
-#define	VALUE_ROTATE		(D3DX_PI * 0.01f)			// 回転量
+#define	VALUE_ROTATE		(D3DX_PI * 0.008f)			// 回転量
 
 #define	Player_WIDTH		(15.0f)						// 地面の幅(X方向)
 #define	Player_DEPTH		(15.0f)						// 地面の奥行(Z方向)
 #define	Player_HEIGHT		(15.0f)						// 地面の高さ(Y方向)
 
 #define Player_ANGLE		(8)
-#define MAXSPEED			(150.0f)						// 移動量
 
 #define SAFE_RELEASE(p) {if(p){(p)->Release();(p)=NULL;}}//安全に解放する
 
@@ -44,6 +43,7 @@ float							item = 0.0f;				// アイテムによっての加速の数値
 float							drift = 0.0f;				// ドリフトによっての加速の数値
 float							drift_count = 0.0f;			// ドリフトカウント
 float							drift_rot = 0.0f;			// ドリフト時の傾き
+float							meter_speed = 0.0f;			// メーター用の変数
 
 static LPDIRECT3DDEVICE9		pDevice;
 static DWORD					dwNumMaterials = 0;
@@ -91,7 +91,7 @@ HRESULT Player_Initialize(void)
 	pD3DXMtrlBuffer->Release();
 	
 	// 位置・回転・スケールの初期設定
-	g_posPlayer = D3DXVECTOR3(20.0f, 100.0f, -50.0f);
+	g_posPlayer = D3DXVECTOR3(-150.0f, 100.0f, 10.0f);
 	g_rotPlayer = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	g_sclPlayer = D3DXVECTOR3(50.0f, 50.0f, 50.0f);
 	g_normalPlayer= D3DXVECTOR3(0.0f, 100.0f, 0.0f);
@@ -126,7 +126,7 @@ void Player_Update(void)
 	if (Keyboard_IsPress(DIK_UP))
 	{
 		// 加速
-		if (accel < MAXSPEED) accel += 10.0f;
+		if (accel < MAXSPEED) accel += 5.0f;
 	}
 	else
 	{
@@ -164,8 +164,8 @@ void Player_Update(void)
 		else
 		{
 			// ドリフトのたまり具合で加速が決まる
-			if (drift_count > 50.0f) drift = 200.0f;
-			if (drift_count > 100.0f) drift = 400.0f;
+			if (drift_count > 40.0f) drift = 100.0f;
+			if (drift_count > 80.0f) drift = 200.0f;
 			drift_count = 0.0f;
 		}
 
@@ -204,6 +204,9 @@ void Player_Update(void)
 	g_posPlayer.x += sinf(g_rotPlayer.y) * (accel + item + drift) / 20;
 	g_posPlayer.z += cosf(g_rotPlayer.y) * (accel + item + drift) / 20;
 
+	// メーター変数
+	meter_speed = accel;
+
 	// アクセルのズレを修正する
 	if (accel<5.0f && accel>-5.0f) accel = 0.0f;
 
@@ -214,7 +217,7 @@ void Player_Update(void)
 	if (drift<1.0f&&drift>-1.0f) drift = 0.0f;
 
 	// エナジースタートに当たった時
-	if (Get_DrinkHit()) item += 300.0f;
+	if (Get_DrinkHit()) item += 100.0f;
 	else if (item != 0.0f) item -= 5.0f;
 
 	// アイテムズレを修正
@@ -240,9 +243,9 @@ void Player_Update(void)
 	// リセット
 	if (Keyboard_IsPress(DIK_RETURN))
 	{
-		g_posPlayer.x = -50.0f;
+		g_posPlayer.x = -150.0f;
 		g_posPlayer.y = 100.0f;
-		g_posPlayer.z = 20.0f;
+		g_posPlayer.z = 10.0f;
 
 		g_rotPlayer.x = 0.0f;
 		g_rotPlayer.y = 0.0f;
@@ -334,4 +337,9 @@ D3DXVECTOR3 GetNormalPlayer_Pos()
 void SetPlayer_Pos(float set) 
 {
 	g_posPlayer.y = set;
+}
+
+float GetMeter_Pos()
+{
+	return meter_speed;
 }

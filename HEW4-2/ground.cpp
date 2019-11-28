@@ -3,8 +3,8 @@
 　・地面を作るファイルだよ
 
  　 制作概要：HEW2年次作品「ペダル」
-　　製作者：バイクのやつ　	(-"-)taiki okahara
-=============================================================*/
+   　　製作者：バイクのやつ　	(-"-)taiki okahara
+	 =============================================================*/
 
 #include "myDirect3D.h"
 #include "input.h"
@@ -16,38 +16,38 @@
 #include <stdlib.h>
 #include "player.h"
 
-//*****************************************************************************
-// マクロ定義
-//*****************************************************************************
+	 //*****************************************************************************
+	 // マクロ定義
+	 //*****************************************************************************
 #define PLATE_SIZE		(30)						//プレートの大きさ
 
-#define	PLATE_X_NUM		(10)						//プレートの数
-#define PLATE_Z_NUM		(10)						//プレートの数
+#define	PLATE_X_NUM		(15)						//プレートの数
+#define PLATE_Z_NUM		(15)						//プレートの数
 #define	PLATE_NUM		(PLATE_X_NUM)*(PLATE_Z_NUM)	//1ブロック内のプレートの総数
 
-#define GROUND_NUM	(15)									//ブロックの総数
+#define GROUND_NUM	(16)									//ブロックの総数
 #define GROUND_X_SIZE		((PLATE_X_NUM) * (PLATE_SIZE))	//ブロックのXサイズ
 #define GROUND_Z_SIZE		((PLATE_Z_NUM) * (PLATE_SIZE))	//ブロックのZサイズ
-//*****************************************************************************
-// グローバル変数
-//*****************************************************************************
+	 //*****************************************************************************
+	 // グローバル変数
+	 //*****************************************************************************
 static LPDIRECT3DVERTEXBUFFER9	g_pVtxBuffGround[GROUND_NUM];	// 頂点バッファへのポインタ
 static LPDIRECT3DINDEXBUFFER9	g_pIdxBuffGround[GROUND_NUM];	// 頂点バッファへのポインタ
 
 GROUND	ground[GROUND_NUM];	//グラウンドをGROUN_NUM分生成
 
-
+							//GROUND	ground_zero;//草だけの当たりのない地面
 
 int		PrimCount = (PLATE_X_NUM * PLATE_Z_NUM) * 2 + (PLATE_Z_NUM - 1) * 4;;	//ポリゴン数
 int		NumIndex = (PLATE_X_NUM + 1) * 2 * PLATE_Z_NUM + (PLATE_Z_NUM - 1) * 2;	//頂点インデックス数
 int		NumVertex = (PLATE_X_NUM + 1) * (PLATE_Z_NUM + 1);						//頂点数
 
-//=============================================================================
-// GROUNDクラス
-//=============================================================================																			
+																				//=============================================================================
+																				// GROUNDクラス
+																				//=============================================================================																			
 
-//	[SetGround_Pos関数]	ブロックの初期設定をする関数
-//【第一引数：ブロック番号】【第二引数：ブロック種類】【第三引数：ブロック座標】
+																				//	[SetGround_Pos関数]	ブロックの初期設定をする関数
+																				//【第一引数：ブロック番号】【第二引数：ブロック種類】【第三引数：ブロック座標】
 void GROUND::SetGround_Pos(int ground_num, int g_type, D3DXVECTOR3 ground_pos) {
 
 
@@ -55,7 +55,7 @@ void GROUND::SetGround_Pos(int ground_num, int g_type, D3DXVECTOR3 ground_pos) {
 	LookIdxNum = new int[NumIndex];		//	VRAMから持ってくるIdx情報の容量確保
 
 
-	// 位置・回転・スケールの初期設定
+										// 位置・回転・スケールの初期設定
 	g_posGround = ground_pos;				//中心となる座標
 	g_rotGround = D3DXVECTOR3(0, 0, 0.0f);	//回転角。基本的にはいじらない
 	g_sclGround = D3DXVECTOR3(1.0f, 1.0f, 1.0f);//大きさ
@@ -80,27 +80,29 @@ void Ground_Initialize(void)
 	//ground生成
 	ground[0].SetGround_Pos(0, 0, D3DXVECTOR3(0.0f, 0.0f, 0.0f));
 
-	ground[1].SetGround_Pos(1, 0, D3DXVECTOR3(0.0f, 0.0f, 300.0f));
-	ground[2].SetGround_Pos(2, 0, D3DXVECTOR3(0.0f, 0.0f, 600.0f));
-
-	ground[3].SetGround_Pos(3, 1, D3DXVECTOR3(0.0f, 0.0f, 900.0f));
-
-	ground[4].SetGround_Pos(4, 6, D3DXVECTOR3(300.0f, 0.0f, 900.0f));
-	ground[5].SetGround_Pos(5, 7, D3DXVECTOR3(600.0f, 50.0f, 900.0f));
-
-	ground[6].SetGround_Pos(6, 2, D3DXVECTOR3(600.0f, 50.0f, 900.0f));
-
-	ground[7].SetGround_Pos(7, 0, D3DXVECTOR3(900.0f, 50.0f, 600.0f));
-	ground[8].SetGround_Pos(8, 0, D3DXVECTOR3(900.0f, 50.0f, 300.0f));
-	ground[9].SetGround_Pos(9, 8, D3DXVECTOR3(900.0f, 50.0f, 0.0f));
+	ground[1].SetGround_Pos(1, 0, D3DXVECTOR3(0.0f, 0.0f, 450.0f));
+	ground[2].SetGround_Pos(2, 0, D3DXVECTOR3(0.0f, 0.0f, 900.0f));
+	ground[3].SetGround_Pos(3, 1, D3DXVECTOR3(0.0f, 0.0f, 1350.0f));//900
 
 
-	ground[10].SetGround_Pos(10, 3, D3DXVECTOR3(600.0f, 0.0f, 0.0f));
+	ground[4].SetGround_Pos(4, 6, D3DXVECTOR3(450.0f, 0.0f, 1350.0f));
+	ground[5].SetGround_Pos(5, 7, D3DXVECTOR3(900.0f, 90.0f, 1350.0f));
 
-	ground[11].SetGround_Pos(11, 5, D3DXVECTOR3(600.0f, 0.0f, -300.0f));
-	ground[12].SetGround_Pos(12, 5, D3DXVECTOR3(300.0f, 0.0f, -300.0f));
+	ground[6].SetGround_Pos(6, 2, D3DXVECTOR3(900.0f, 90.0f, 1350.0f));
+
+	ground[7].SetGround_Pos(7, 0, D3DXVECTOR3(1350.0f, 90.0f, 900.0f));
+	ground[8].SetGround_Pos(8, 0, D3DXVECTOR3(1350.0f, 90.0f, 450.0f));
+	ground[9].SetGround_Pos(9, 8, D3DXVECTOR3(1350.0f, 90.0f, 0.0f));
+
+
+	ground[10].SetGround_Pos(10, 3, D3DXVECTOR3(900.0f, 0.0f, 0.0f));
+
+	ground[11].SetGround_Pos(11, 5, D3DXVECTOR3(900.0f, 0.0f, -450.0f));
+	ground[12].SetGround_Pos(12, 5, D3DXVECTOR3(450.0f, 0.0f, -450.0f));
 
 	ground[13].SetGround_Pos(13, 4, D3DXVECTOR3(0.0f, 0.0f, -0.0f));
+
+	ground[14].SetGround_Pos(14, 99, D3DXVECTOR3(0.0f, -1.0f, 0.0f));
 }
 
 //=============================================================================
@@ -166,7 +168,14 @@ void Ground_Draw(void)
 
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD03));//テクスチャを変える場合はここの第二引数を変更する
+		if (i == 14)
+		{
+			pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD03));//テクスチャを変える場合はここの第二引数を変更する
+		}
+		else
+		{
+			pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD01));//テクスチャを変える場合はここの第二引数を変更する
+		}
 
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, NumVertex, 0, PrimCount);
 	}
@@ -199,7 +208,7 @@ HRESULT MakeVertexGround(int ground_num)
 		g_pVtxBuffGround[ground_num]->Lock(0, 0, (void**)&pVtx, 0); //VRAMにあったメモリをシステム上に持ってきてくれる
 
 
-		//ブロックの種類でswitch
+																	//ブロックの種類でswitch
 		switch (ground[ground_num].ground_type)
 		{
 		case 0:
@@ -230,6 +239,7 @@ HRESULT MakeVertexGround(int ground_num)
 			Block8_Stage(pVtx, ground_num);//ブロック8を作成
 			break;
 		default:
+			Stage_Zero(pVtx, ground_num);
 			break;
 		}
 
@@ -260,15 +270,15 @@ HRESULT MakeVertexGround(int ground_num)
 
 	}
 	/*
-		1ブロックを上から見たとき（X-Z座標）の4頂点をPointとする
+	1ブロックを上から見たとき（X-Z座標）の4頂点をPointとする
 
-		Point1　　Point2
-		　__________
-		  |         |
-		  |         |
-		  |_________|
-		Point0　　Point3
-	*/
+	Point1　　Point2
+	　__________
+	 |         |
+	 |         |
+	 |_________|
+	 Point0　　Point3
+	 */
 	ground[ground_num].Point0 = D3DXVECTOR3(min_Pos_x, 0.0f, min_Pos_z);
 	ground[ground_num].Point1 = D3DXVECTOR3(min_Pos_x, 0.0f, max_Pos_z);
 	ground[ground_num].Point2 = D3DXVECTOR3(max_Pos_x, 0.0f, max_Pos_z);
@@ -441,7 +451,7 @@ float SetGroundHit(int g_num) {
 
 						D3DXVec3Cross(&n, &vector1, &vector3);//外積で面法線を計算
 
-						//地面より下にいたら地面上に再設置
+															  //地面より下にいたら地面上に再設置
 						if ((D3DXVec3Dot(&naiseki2, &n)) > 0.00 && (D3DXVec3Dot(&naiseki1, &n)) <= 0.00 ||
 							(D3DXVec3Dot(&naiseki2, &n)) <= 0.00 && (D3DXVec3Dot(&naiseki1, &n)) > 0.00) {
 
@@ -476,7 +486,7 @@ void Block0_Stage(VERTEX_3D *pvtx, int g_num) {
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * x) / 450, (30.0f * z) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -493,13 +503,13 @@ void Block1_Stage(VERTEX_3D *pvtx, int g_num) {
 		for (int x = 0; x < PLATE_X_NUM + 1; x++)
 		{
 
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 20) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.x, 0.5f * x * z + base_position.y, cos(-(z* D3DX_PI / 20) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.z);
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 30) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.x, 0.4f * x * z + base_position.y, cos(-(z* D3DX_PI / 30) + D3DX_PI / 2) * (PLATE_SIZE * x + 1) + base_position.z);
 
 
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * x) / 450, (30.0f * z) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -514,10 +524,10 @@ void Block2_Stage(VERTEX_3D *pvtx, int g_num) {
 	{
 		for (int x = 0; x < PLATE_X_NUM + 1; x++)
 		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 20) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f + base_position.y, cos((z* D3DX_PI / 20) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 30) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f + base_position.y, cos((z* D3DX_PI / 30) - D3DX_PI / 2) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * x) / 450, (30.0f * z) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -533,12 +543,12 @@ void Block3_Stage(VERTEX_3D *pvtx, int g_num) {
 	{
 		for (int x = 0; x < PLATE_X_NUM + 1; x++)
 		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 20) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f + base_position.y, cos((z* D3DX_PI / 20) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin((z* D3DX_PI / 30) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.x, 0.0f + base_position.y, cos((z* D3DX_PI / 30) - D3DX_PI) * ((PLATE_X_NUM - x) * PLATE_SIZE + 1) + base_position.z);
 
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * (PLATE_X_NUM - x)) / 500, (50.0f * (PLATE_Z_NUM - z)) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * (PLATE_X_NUM - x)) / 450, (30.0f * (PLATE_Z_NUM - z)) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -554,12 +564,12 @@ void Block4_Stage(VERTEX_3D *pvtx, int g_num) {
 	{
 		for (int x = 0; x < PLATE_X_NUM + 1; x++)
 		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 20) + D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.x, 0.0f + base_position.y, cos(-(z* D3DX_PI / 20) - D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.z);
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-1 * sin(-(z* D3DX_PI / 30) + D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.x, 0.0f + base_position.y, cos(-(z* D3DX_PI / 30) - D3DX_PI) * (PLATE_SIZE * x + 1) + base_position.z);
 
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * x) / 450, (30.0f * z) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -578,12 +588,12 @@ void Block5_Stage(VERTEX_3D *pvtx, int g_num) {
 			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, 0.0f + base_position.y, (PLATE_SIZE * z) + base_position.z);
 			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
 			{
-				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
 			}*/
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * (PLATE_Z_NUM - z)) / 500, (50.0f * x) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * (PLATE_Z_NUM - z)) / 450, (30.0f * x) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -599,15 +609,15 @@ void Block6_Stage(VERTEX_3D *pvtx, int g_num) {
 	{
 		for (int x = 0; x < PLATE_X_NUM + 1; x++)
 		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, 5.0f * z + base_position.y, (PLATE_SIZE * z) + base_position.z);
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, 6.0f * z + base_position.y, (PLATE_SIZE * z) + base_position.z);
 			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
 			{
-				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
 			}*/
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * z) / 500, (50.0f * x) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * z) / 450, (30.0f * x) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -623,15 +633,15 @@ void Block7_Stage(VERTEX_3D *pvtx, int g_num) {
 	{
 		for (int x = 0; x < PLATE_X_NUM + 1; x++)
 		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, -0.5f * (PLATE_Z_NUM - z) * x + base_position.y, (PLATE_SIZE * z) + base_position.z);
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, -0.4f * (PLATE_Z_NUM - z) * x + base_position.y, (PLATE_SIZE * z) + base_position.z);
 			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
 			{
-				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
 			}*/
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * (PLATE_Z_NUM - z)) / 500, (50.0f * x) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * (PLATE_Z_NUM - z)) / 450, (30.0f * (PLATE_X_NUM - x)) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
@@ -650,14 +660,34 @@ void Block8_Stage(VERTEX_3D *pvtx, int g_num) {
 			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-(PLATE_SIZE * x) + base_position.x, (PLATE_Z_NUM - z) * 5.0f * -1.0f + base_position.y, (PLATE_SIZE * z) + base_position.z);
 			/*if (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1) < 5)
 			{
-				pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos.y = (5 - (((PLATE_X_NUM + 1)* z + x) % (PLATE_X_NUM + 1))) * 10;
 			}*/
 
 			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((50.0f * x) / 500, (50.0f * z) / 500);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * x) / 450, (30.0f * z) / 450);
 
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
 	}
+}
+
+void Stage_Zero(VERTEX_3D *pvtx, int g_num) {
+	srand((unsigned int)time(NULL));
+	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
+
+	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
+	{
+		for (int x = 0; x < PLATE_X_NUM + 1; x++)
+		{
+			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-PLATE_SIZE * x * 10 + (PLATE_SIZE * PLATE_X_NUM * 10) / 2, 0.0f + base_position.y, PLATE_SIZE * z * 10 - (PLATE_SIZE * PLATE_X_NUM * 10) / 2);
+
+			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * x) / 450, (30.0f * z) / 450);
+
+			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
+		}
+	}
+
 }

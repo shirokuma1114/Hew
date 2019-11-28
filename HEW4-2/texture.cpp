@@ -15,12 +15,15 @@ typedef struct TextureFile_tag
 } TextureFile;
 
 static const TextureFile g_TextureFiles[] = {
-	{ "asset/texture/SCENE_TITLE.png", SCREEN_WIDTH, SCREEN_HEIGHT },
+	{ "asset/texture/TITLE_BG.png", SCREEN_WIDTH, SCREEN_HEIGHT },
+	{ "asset/texture/TITLE_Title.png", 256, 64 },
+	{ "asset/texture/TITLE_Press.png", 256, 64 },
+	{ "asset/texture/meter.png", 256, 256 },
+	{ "asset/texture/needle.png", 20, 100 },
 	{ "asset/texture/number000.png", 25, 30 },
 	{ "asset/texture/RESULT.jpg", SCREEN_WIDTH, SCREEN_HEIGHT },
-    { "asset/texture/field000.jpg", 160, 160 },
-	{ "asset/texture/field001.jpg", 160, 160 },
 	{ "asset/texture/road.jpg", 500, 500 },
+	{ "asset/texture/field000.jpg", 500, 500 },
 };
 
 static const int TEXTURE_FILE_COUNT = sizeof(g_TextureFiles) / sizeof(g_TextureFiles[0]);
