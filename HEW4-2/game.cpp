@@ -16,7 +16,7 @@
 #include "grid.h"
 #include "drink.h"
 #include "start.h"
-
+#include "syutyu.h"
 
 typedef enum PHASE_INDEX
 {
@@ -70,6 +70,9 @@ void Game_Initialize(void)
 
 	// メーター
 	Meter_Initialize();
+
+	// 集中
+	Syutyu_Initialize();
 }
 
 void Game_Finalize(void)
@@ -101,6 +104,9 @@ void Game_Finalize(void)
 
 	// メーター
 	Meter_Finalize();
+
+	// 集中
+	Syutyu_Finalize();
 }
 
 void Game_Update(void)
@@ -132,6 +138,9 @@ void Game_Update(void)
 
 	// メーター
 	Meter_Update();
+
+	// 集中
+	Syutyu_Update();
 
 	if (Keyboard_IsTrigger(DIK_SPACE))
 	{
@@ -166,6 +175,9 @@ void Game_Draw(void)
 
 	// メーター
 	Meter_Draw();
+
+	// 集中
+	Syutyu_Draw();
 }
 
 

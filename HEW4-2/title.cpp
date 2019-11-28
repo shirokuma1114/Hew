@@ -22,7 +22,13 @@ void Title_Finalize(void)
 
 void Title_Update(void)
 {
-	color+=2;
+	// “§–¾‚É‚·‚éEŒ³‚É–ß‚·
+	if(color_flag)color+=2;
+	else color -= 2;
+	if (color > 252) color_flag = false;
+	if (color < 10) color_flag = true;
+
+	// ƒTƒCƒY‚ÌŠg‘åk¬
 	if(size_flag) size += 0.03f;
 	else size -= 0.03f;
 	if (size < 0.1f)size_flag = true;

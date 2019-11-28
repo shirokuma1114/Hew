@@ -54,7 +54,6 @@ void Block5_Stage(VERTEX_3D *pvtx, int g_num);
 void Block6_Stage(VERTEX_3D *pvtx, int g_num);
 void Block7_Stage(VERTEX_3D *pvtx, int g_num);
 void Block8_Stage(VERTEX_3D *pvtx, int g_num);
-void Stage_Zero(VERTEX_3D *pvtx, int g_num);
 
 
 //void Block_Stage(VERTEX_3D *pvtx, int g_num, D3DXVECTOR3 pos_algorithm, D3DXVECTOR3 texture);

@@ -24,6 +24,7 @@ static const TextureFile g_TextureFiles[] = {
 	{ "asset/texture/RESULT.jpg", SCREEN_WIDTH, SCREEN_HEIGHT },
 	{ "asset/texture/road.jpg", 500, 500 },
 	{ "asset/texture/field000.jpg", 500, 500 },
+	{ "asset/texture/shuchu-sen-_white.png", 1280, 1280 },
 };
 
 static const int TEXTURE_FILE_COUNT = sizeof(g_TextureFiles) / sizeof(g_TextureFiles[0]);

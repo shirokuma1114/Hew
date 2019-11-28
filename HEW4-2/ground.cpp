@@ -142,7 +142,6 @@ void Ground_Draw(void)
 
 	for (int i = 0; i < GROUND_NUM; i++)
 	{
-
 		// ワールドマトリックスの初期化
 		D3DXMatrixIdentity(&ground[i].g_mtxWorldGround);
 
@@ -159,7 +158,6 @@ void Ground_Draw(void)
 		D3DXMatrixMultiply(&ground[i].g_mtxWorldGround, &ground[i].g_mtxWorldGround, &mtxRot);
 
 
-
 		pDevice->SetTransform(D3DTS_WORLD, &ground[i].g_mtxWorldGround);
 		pDevice->SetStreamSource(0, g_pVtxBuffGround[i], 0, sizeof(VERTEX_3D));
 
@@ -168,14 +166,7 @@ void Ground_Draw(void)
 
 		pDevice->SetFVF(FVF_VERTEX_3D);
 
-		if (i == 14)
-		{
-			pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD03));//テクスチャを変える場合はここの第二引数を変更する
-		}
-		else
-		{
-			pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD01));//テクスチャを変える場合はここの第二引数を変更する
-		}
+		pDevice->SetTexture(0, Texture_GetTexture(TEXTURE_INDEX_FIELD01));//テクスチャを変える場合はここの第二引数を変更する
 
 		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP, 0, 0, NumVertex, 0, PrimCount);
 	}
@@ -238,11 +229,7 @@ HRESULT MakeVertexGround(int ground_num)
 		case 8:
 			Block8_Stage(pVtx, ground_num);//ブロック8を作成
 			break;
-		default:
-			Stage_Zero(pVtx, ground_num);
-			break;
 		}
-
 		g_pVtxBuffGround[ground_num]->Unlock(); //VRAMにメモリを返す(重い処理)
 	}
 
@@ -670,24 +657,4 @@ void Block8_Stage(VERTEX_3D *pvtx, int g_num) {
 			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
 		}
 	}
-}
-
-void Stage_Zero(VERTEX_3D *pvtx, int g_num) {
-	srand((unsigned int)time(NULL));
-	D3DXVECTOR3 base_position = ground[g_num].g_posGround;
-
-	for (int z = 0; z < PLATE_Z_NUM + 1; z++)
-	{
-		for (int x = 0; x < PLATE_X_NUM + 1; x++)
-		{
-			pvtx[(PLATE_X_NUM + 1)* z + x].pos = D3DXVECTOR3(-PLATE_SIZE * x * 10 + (PLATE_SIZE * PLATE_X_NUM * 10) / 2, 0.0f + base_position.y, PLATE_SIZE * z * 10 - (PLATE_SIZE * PLATE_X_NUM * 10) / 2);
-
-			pvtx[(PLATE_X_NUM + 1)* z + x].nor = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].col = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-			pvtx[(PLATE_X_NUM + 1)* z + x].tex = D3DXVECTOR2((30.0f * x) / 450, (30.0f * z) / 450);
-
-			ground[g_num].LookVtx[(PLATE_X_NUM + 1)* z + x] = pvtx[(PLATE_X_NUM + 1)* z + x];
-		}
-	}
-
 }
