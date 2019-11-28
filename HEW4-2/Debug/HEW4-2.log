@@ -1,3 +1,51 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: 中間ディレクトリ (Debug\) に別のプロジェクト (directx_sanple13.vcxproj) と共有されているファイルが含まれています。これにより、クリーンしてリビルド動作が適切に行われない可能性があります。
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 別のプロセスで使用されているため、プロセスはファイル 'd:\ドキュメント\hew-1\hew4-2\debug\hew4-2.ilk' にアクセスできません。
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppClean.targets(76,5): warning : 別のプロセスで使用されているため、プロセスはファイル 'd:\ドキュメント\hew-1\hew4-2\debug\hew4-2.pdb' にアクセスできません。
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: 中間ディレクトリ (Debug\) に別のプロジェクト (directx_sanple13.vcxproj) と共有されているファイルが含まれています。これにより、クリーンしてリビルド動作が適切に行われない可能性があります。
+  camera.cpp
+  camera2.cpp
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(82): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(83): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(87): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(88): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(92): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(93): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(103): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(104): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(108): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(109): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(113): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(114): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(122): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(123): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(131): warning C4244: '+=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(132): warning C4244: '-=': 'double' から 'float' への変換です。データが失われる可能性があります。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(141): warning C4305: '+=': 'double' から 'float' へ切り詰めます。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(154): warning C4305: '-=': 'double' から 'float' へ切り詰めます。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(177): warning C4305: '-=': 'double' から 'float' へ切り詰めます。
+d:\ドキュメント\hew-1\hew4-2\camera2.cpp(190): warning C4305: '+=': 'double' から 'float' へ切り詰めます。
+  debugproc.cpp
+  drink.cpp
+  fade.cpp
+  game.cpp
+d:\ドキュメント\hew-1\hew4-2\scene.h(11): warning C4091: 'typedef ': 変数が何も宣言されていないときは、'SCENE_INDEX' の左辺を無視します。
+d:\ドキュメント\hew-1\hew4-2\game.cpp(30): warning C4091: 'typedef ': 変数が何も宣言されていないときは、'PHASE_INDEX' の左辺を無視します。
+  grid.cpp
   ground.cpp
-  HEW4-2.vcxproj -> C:\Users\hirom\source\repos\HEW4-2\Debug\HEW4-2.exe
+  input.cpp
+  light.cpp
+  main.cpp
+d:\ドキュメント\hew-1\hew4-2\scene.h(11): warning C4091: 'typedef ': 変数が何も宣言されていないときは、'SCENE_INDEX' の左辺を無視します。
+  myDirect3D.cpp
+  player.cpp
+  result.cpp
+d:\ドキュメント\hew-1\hew4-2\scene.h(11): warning C4091: 'typedef ': 変数が何も宣言されていないときは、'SCENE_INDEX' の左辺を無視します。
+  scene.cpp
+d:\ドキュメント\hew-1\hew4-2\scene.h(11): warning C4091: 'typedef ': 変数が何も宣言されていないときは、'SCENE_INDEX' の左辺を無視します。
+  score.cpp
+  sprite.cpp
+  start.cpp
+  texture.cpp
+  title.cpp
+d:\ドキュメント\hew-1\hew4-2\scene.h(11): warning C4091: 'typedef ': 変数が何も宣言されていないときは、'SCENE_INDEX' の左辺を無視します。
+  コードを生成中...
+  HEW4-2.vcxproj -> D:\ドキュメント\Hew-1\HEW4-2\Debug\HEW4-2.exe

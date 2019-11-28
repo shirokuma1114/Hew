@@ -20,7 +20,7 @@ static const TextureFile g_TextureFiles[] = {
 	{ "asset/texture/RESULT.jpg", SCREEN_WIDTH, SCREEN_HEIGHT },
     { "asset/texture/field000.jpg", 160, 160 },
 	{ "asset/texture/field001.jpg", 160, 160 },
-	{ "asset/texture/field002.jpg", 160, 160 },
+	{ "asset/texture/road.jpg", 500, 500 },
 };
 
 static const int TEXTURE_FILE_COUNT = sizeof(g_TextureFiles) / sizeof(g_TextureFiles[0]);
